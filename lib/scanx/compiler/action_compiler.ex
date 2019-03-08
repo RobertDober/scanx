@@ -29,6 +29,14 @@ defmodule Scanx.Compiler.ActionCompiler do
   """
 
   @doc false
+  @spec compute_action(action_params_t()) :: action() 
+  def compute_action(actions)
+  def compute_action(%{state: :halt}=actions), do: compute_halt_action(actions)
+  def compute_action(%{advance: false}=actions), do: compute_no_advance_action(actions)
+  def compute_action(actions), do: compute_advance_action(actions)
+
+
+  @doc false
   @spec compute_empty_action( action_params_t() ) :: action() 
   def compute_empty_action(actions)
   def compute_empty_action(%{emit: false, state: :halt}), do: {:return, nil, nil}
@@ -37,12 +45,24 @@ defmodule Scanx.Compiler.ActionCompiler do
   def compute_empty_action(%{emit: emit,  state: state}), do: {:emit, state, emit}
 
   @doc false
-  @spec compute_action(action_params_t()) :: action() 
-  def compute_action(actions)
-  def compute_action(%{state: :halt}=actions), do: compute_halt_action(actions)
-  def compute_action(%{advance: false}=actions), do: compute_no_advance_action(actions)
-  def compute_action(actions), do: compute_advance_action(actions)
+  @spec compute_rest_action(action_params_t()) :: action() 
+  def compute_rest_action( actions )
+  def compute_rest_action( %{collect: :before, emit: emit}), do: {:collect_all_emit_return, nil, emit}
+  def compute_rest_action( actions ), do: compute_halt_action(actions)
 
+
+  @spec compute_advance_action(action_params_t()) :: action() 
+  defp compute_advance_action(actions)
+  defp compute_advance_action(%{collect: false, emit: nil, state: state}), do:
+    {:skip, state, nil}
+  defp compute_advance_action(%{collect: true, emit: nil, state: state}), do:
+    {:collect, state, nil}
+  defp compute_advance_action(%{collect: false, emit: emit, state: state}), do:
+    {:emit, state, emit}
+  defp compute_advance_action(%{collect: :before, emit: emit, state: state}), do:
+    {:collect_emit, state, emit}
+  defp compute_advance_action(%{collect: :after, emit: emit, state: state}), do:
+    {:emit_collect, state, emit}
 
   @spec compute_halt_action(action_params_t()) :: action() 
   defp compute_halt_action(actions)
@@ -65,19 +85,6 @@ defmodule Scanx.Compiler.ActionCompiler do
   defp compute_no_advance_action(%{collect: :after, emit: emit, state: state}), do:
     {:push_emit_collect, state, emit}
 
-
-  @spec compute_advance_action(action_params_t()) :: action() 
-  defp compute_advance_action(actions)
-  defp compute_advance_action(%{collect: false, emit: nil, state: state}), do:
-    {:skip, state, nil}
-  defp compute_advance_action(%{collect: true, emit: nil, state: state}), do:
-    {:collect, state, nil}
-  defp compute_advance_action(%{collect: false, emit: emit, state: state}), do:
-    {:emit, state, emit}
-  defp compute_advance_action(%{collect: :before, emit: emit, state: state}), do:
-    {:collect_emit, state, emit}
-  defp compute_advance_action(%{collect: :after, emit: emit, state: state}), do:
-    {:emit_collect, state, emit}
 
 
 

@@ -14,7 +14,7 @@ defmodule Scanx.Types do
       @type transitions :: list(transition())
 
       # Intermediate representation
-      @type opcode ::  :collect | :collect_emit | :collect_emit_return |
+      @type opcode ::  :collect | :collect_all_emit_return | :collect_emit | :collect_emit_return |
                        :emit | :emit_collect | :emit_collect_return |
                        :push | :push_collect | :push_collect_emit | :push_emit | :push_emit_collect |
                        :return |
