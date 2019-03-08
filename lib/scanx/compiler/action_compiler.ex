@@ -39,9 +39,9 @@ defmodule Scanx.Compiler.ActionCompiler do
   @doc false
   @spec compute_empty_action( action_params_t() ) :: action() 
   def compute_empty_action(actions)
-  def compute_empty_action(%{emit: false, state: :halt}), do: {:return, nil, nil}
+  def compute_empty_action(%{emit: nil, state: :halt}), do: {:return, nil, nil}
   def compute_empty_action(%{emit: emit,  state: :halt}), do: {:emit_return, nil, emit}
-  def compute_empty_action(%{emit: false, state: state}), do: {:skip, state, nil}
+  def compute_empty_action(%{emit: nil, state: state}), do: {:skip, state, nil}
   def compute_empty_action(%{emit: emit,  state: state}), do: {:emit, state, emit}
 
   @doc false
@@ -66,7 +66,7 @@ defmodule Scanx.Compiler.ActionCompiler do
 
   @spec compute_halt_action(action_params_t()) :: action() 
   defp compute_halt_action(actions)
-  defp compute_halt_action(%{emit: false}), do: {:return, nil, nil}
+  defp compute_halt_action(%{emit: nil}), do: {:return, nil, nil}
   defp compute_halt_action(%{collect: :before, emit: emit}), do:
     {:collect_emit_return, nil, emit}
   defp compute_halt_action(%{emit: emit}), do: {:emit_return, nil, emit}
@@ -74,9 +74,9 @@ defmodule Scanx.Compiler.ActionCompiler do
   @spec compute_no_advance_action(action_params_t()) :: action() 
   defp compute_no_advance_action(actions)
   defp compute_no_advance_action(%{state: nil}), do: {:push, nil, nil} # Loop detection is elsewhere
-  defp compute_no_advance_action(%{collect: false, emit: false, state: state}), do:
+  defp compute_no_advance_action(%{collect: false, emit: nil, state: state}), do:
     {:push, state, nil}
-  defp compute_no_advance_action(%{collect: true, emit: false, state: state}), do:
+  defp compute_no_advance_action(%{collect: true, emit: nil, state: state}), do:
     {:push_collect, state, nil}
   defp compute_no_advance_action(%{collect: false, emit: emit, state: state}), do:
     {:push, state, emit}

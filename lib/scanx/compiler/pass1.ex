@@ -16,14 +16,20 @@ defmodule Scanx.Compiler.Pass1 do
 
   @doc false
   @spec transform(transitions()) :: intermediates()
-  def transform(triples), do: Enum.map(triples, &transform_triple/1)
+  def transform(triples), do: _transform(triples, [])
 
   @doc false
-  @spec transform_triple(transition()) :: intermediate()
-  def transform_triple(triple)
-  def transform_triple({current_state, nil, actions}), do: {current_state, nil, compute_empty_action(actions)}
-  def transform_triple({current_state, :rest, actions}), do: {current_state, :rest, compute_rest_action(actions)}
-  def transform_triple({current_state, grapheme, actions}), do: {current_state, grapheme, compute_action(actions)}
+  @spec _transform(transitions(), intermediates()) :: intermediates()
+  defp _transform(triple, result)
+  defp _transform([], result), do: result
+  defp _transform([triple|rest], result), do: _transform(rest, [_transform_triple(triple)|result])
+
+
+  @spec _transform_triple( transition() ) :: intermediate()
+  defp _transform_triple(triple)
+  defp _transform_triple({current_state, nil, actions}), do: {current_state, nil, compute_empty_action(actions)}
+  defp _transform_triple({current_state, :rest, actions}), do: {current_state, :rest, compute_rest_action(actions)}
+  defp _transform_triple({current_state, grapheme, actions}), do: {current_state, grapheme, compute_action(actions)}
   
 
 end
