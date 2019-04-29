@@ -16,6 +16,5 @@ defmodule Support.Scanner1 do
 
   state :indent1 do
     empty emit: :blank
-
   end
 end
