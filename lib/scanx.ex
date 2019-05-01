@@ -1,48 +1,25 @@
 defmodule Scanx do
 
-  alias Scanx.Compiler.Pass1
 
-  @moduledoc """
-  Implements a DSL to define a State Machine based Scanner
-
-  Given the following module
-
-        defmodule MyScanner do
-          use Scanx
-
-          state :start do
-            empty emit: :blank
-            on " ", state: indent1
-            anything state: :command, advance: false
-          end
-
-          state :indent1 do
-            empty emit: :blank
-            on " ", state: indent2
-            anything state: :command, advance: false
-          end
-
-          state :indent2 do
-            empty emit: :blank
-            anything state: :comment, advance: false
-          end
-
-          state :command do
-            on :alpha, state: :command1 # predefined set
-            on "; ", state: :comment
-          end
-  """
+  alias Scanx.Compiler.Actions
 
   defmacro __before_compile__(env) do
+    # IO.puts env.module
+    # IO.puts "================================="
     definitions = 
     Module.get_attribute(env.module, :_transitions) 
-    |> Pass1.transform
-    |> IO.inspect
+    |> Enum.reverse
+    |> Enum.map(&Actions.emit_scan_definition/1)
 
+    if System.get_env("DEBUG_MACROS") do
+      definitions
+      |> Macro.to_string
+      |> IO.puts
+    end
     quote do
-      def scan(transition)
-      def scan(:undefined), do: []
-      # unquote(definitions)
+      def scan(nil, nil, 0, nil, nil), do: []
+      defoverridable scan: 5
+      unquote_splicing(definitions)
     end
   end
 
@@ -50,8 +27,16 @@ defmodule Scanx do
     quote do
       @before_compile unquote(__MODULE__)
       import unquote(__MODULE__)
-      def scan_line(line), do:
-      scan({:start, String.graphemes(line), 1, [], []})
+      import unquote(__MODULE__.Compiler.Actions)
+      def scan_document(doc) do
+        doc
+        |> String.split(~r{\r\n?|\n})
+        |> Enum.zip(Stream.iterate(1, &(&1 + 1)))
+        |> Enum.flat_map(&scan_line/1)
+      end
+
+      def scan_line({line, lnb}), do:
+        scan(:start, String.graphemes(line), {lnb, 1}, [], [])
       Module.register_attribute __MODULE__, :_transitions, accumulate: true
       Module.register_attribute __MODULE__, :_current_state, accumulate: false
     end
@@ -66,29 +51,9 @@ defmodule Scanx do
     end
   end
 
-  defmacro anything(params), do: add_transition(:anything, params, true)
-  defmacro empty(params), do: add_transition(:empty, Keyword.merge(params, state: :halt))
-  defmacro on(head, params), do: add_transition(:on, params, head)
-  defmacro rest(params), do: add_transition(:rest, Keyword.merge(params, state: :halt), :rest)
-
-
-  @default_params %{
-    advance: true,
-    collect: true,
-    emit: nil,
-    state: nil
-  }
-  defp add_transition(trans_type, params \\ [], head \\ nil) do
-    params1 =
-      params|>Enum.into(@default_params)|>Macro.escape
-
-    quote do
-      current_state = Module.get_attribute(__MODULE__, :_current_state)
-      if current_state == nil do
-        raise "Must not call #{unquote(trans_type)} outside of state macro"
-      end
-      @_transitions {current_state, unquote(head), unquote(params1)}
-    end
-  end
+  defmacro anything(state, params \\ []), do: Actions.add_transition(:anything, state, params)
+  defmacro empty(state, params \\ []), do: Actions.add_transition(:empty, state, params)
+  defmacro on(grapheme, state, params \\ []), do: Actions.add_transition(grapheme, state, params)
+  # defmacro on_any(graph_list, state, params \\ []), do: Actions.add_transition_for_any(graph_list, state, params)
 
 end

@@ -3,8 +3,6 @@ defmodule Scanner1Test do
   alias Support.Scanner1, as: S
   
   test "one" do
-    S.scan_line(" ")
-    |> IO.inspect
-    
+    assert S.scan_document(" ") == [{:ws, " ", 1, 1}]
   end
 end
