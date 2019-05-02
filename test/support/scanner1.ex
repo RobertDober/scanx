@@ -1,5 +1,5 @@
 defmodule Support.Scanner1 do
-  use Scanx
+  use ScanX
 
   ws = [" ", "\t"]
   state :start do
