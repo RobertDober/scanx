@@ -1,13 +1,16 @@
 defmodule ScanX do
   alias ScanX.Compiler.Actions
+  alias ScanX.Compiler.Generator
 
   defmacro __before_compile__(env) do
-    # IO.puts env.module
-    # IO.puts "================================="
+    IO.puts env.module
+    IO.puts "================================="
     definitions =
       Module.get_attribute(env.module, :_transitions)
-      |> Enum.reverse()
-      |> Enum.map(&Actions.emit_scan_definition/1)
+      |> IO.inspect
+      |> Enum.reverse
+      |> List.flatten
+      |> Enum.map(&Generator.emit_scan_definition/1)
 
     if System.get_env("DEBUG_MACROS") do
       definitions
@@ -27,6 +30,7 @@ defmodule ScanX do
       @before_compile unquote(__MODULE__)
       import unquote(__MODULE__)
       import unquote(__MODULE__.Compiler.Actions)
+      import unquote(__MODULE__.Compiler.Generator)
 
       def scan_document(doc, options \\ []) do
         doc
@@ -52,9 +56,24 @@ defmodule ScanX do
     end
   end
 
-  defmacro anything(state, params \\ []), do: Actions.add_transition(:anything, state, params)
-  defmacro empty(state, params \\ []), do: Actions.add_transition(:empty, state, params)
-  defmacro on(grapheme, state, params \\ []), do: Actions.add_transition(grapheme, state, params)
+  defmacro anything(state, params \\ []) do
+    quote do
+      current_state = Module.get_attribute(__MODULE__, :_current_state)
+      @_transitions Actions.add_transition(:anything, unquote(state), unquote(params), current_state)
+    end
+  end
+  defmacro empty(state, params \\ []) do
+    quote do
+      current_state = Module.get_attribute(__MODULE__, :_current_state)
+      @_transitions Actions.add_transition(:empty, unquote(state), unquote(params), current_state)
+    end
+  end
+  defmacro on(grapheme, state, params \\ []) do
+    quote do
+      current_state = Module.get_attribute(__MODULE__, :_current_state)
+      @_transitions Actions.add_transition(unquote(grapheme), unquote(state), unquote(params), current_state)
+    end
+  end
 
   # defmacro on_any(graph_list, state, params \\ []), do: Actions.add_transition_for_any(graph_list, state, params)
 end
