@@ -16,12 +16,12 @@ defmodule ScanX.Compiler.Generator do
   def emit_scan_definition({grapheme, current_state, params}),
     do: emit_advance_on_state_def(grapheme, current_state, params)
 
-  
+
   def convert_part(parts), do: parts |> IO.iodata_to_binary() |> String.reverse()
 
   def add_token(tokens, {lnb, col}, parts, state) do
     string = parts |> convert_part()
-    [{state, string, lnb, col} | tokens]
+    [{normalize_state(state), string, lnb, col} | tokens]
   end
 
   def add_token_and_col(tokens, {lnb, col}, parts, state) do
@@ -545,6 +545,7 @@ defmodule ScanX.Compiler.Generator do
     graphemes = String.graphemes(g)
     ns = Map.get(params, :state) || cs
 
+
     quote do
       def scan(unquote(cs), [unquote_splicing(graphemes) | rest], {lnb, col}, parts, tokens) do
         {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit))
@@ -557,5 +558,16 @@ defmodule ScanX.Compiler.Generator do
         scanx(unquote(ns), rest, {lnb, nc}, [unquote_splicing(Enum.reverse(graphemes))], nts)
       end
     end
+  end
+
+  defp normalize_state(state_sym_or_string)
+  defp normalize_state(string) when is_binary(string) do
+    string |> String.to_atom
+  end
+  defp normalize_state(sym) when is_atom(sym) do
+    sym
+  end
+  defp normalize_state(anything) do
+    raise ArgumentError, "need a symbol or string, not an #{inspect anything}"
   end
 end
