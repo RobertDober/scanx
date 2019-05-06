@@ -25,7 +25,23 @@ defmodule Support.Markdown do
     anything :text
   end
 
+  #
   # ... all other states in alphabetical order
+  state :bq6 do
+    empty :halt, emit: :bq6
+    on ws, :ws, emit: :bq6
+    on "`", :text
+    anything :text, emit: :bq6
+  end
+  for {bquote, size} <- Enum.map(bquotes, &{&1, String.length(&1)}) do
+    bq_state = "bq#{size}"
+    state bq_state do
+      empty :halt, emit: bq_state
+      on ws, :ws, emit: bq_state
+      anything :text, emit: bq_state
+    end
+  end
+
   state :indent do
     empty :halt, emit: :blank
     on ws, :indent
@@ -57,8 +73,9 @@ defmodule Support.Markdown do
     empty :halt, emit: :trailing_ws
     on ws, :ws
     for {bquote, size} <- Enum.zip(bquotes, Stream.iterate(6, &(&1-1))) do
-      on bquote "bq#{size}"
+      on bquote, "bq#{size}", emit: :ws
     end
     anything :text, emit: :ws
   end
+
 end

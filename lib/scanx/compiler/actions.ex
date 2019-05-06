@@ -17,16 +17,13 @@ defmodule ScanX.Compiler.Actions do
     _add_transition(trigger, state, current_state)
   end
 
+  def add_transition(trigger, state, params, current_state) when is_binary(state) do
+    _add_transition(trigger, Keyword.put(params, :state, String.to_atom(state)), current_state)
+  end
   def add_transition(trigger, state, params, current_state) do
     _add_transition(trigger, Keyword.put(params, :state, state), current_state)
   end
 
-  defp _add_transition(trigger, params, current_state)
-  defp _add_transition(trigger, params, current_state) when is_binary(trigger) do
-    trigger
-    |> String.to_atom
-    |> _add_transition(params, current_state)
-  end
   defp _add_transition(trigger, params, current_state) do
     params =
       if is_list(params) do

@@ -7,7 +7,6 @@ defmodule ScanX do
     IO.puts "================================="
     definitions =
       Module.get_attribute(env.module, :_transitions)
-      |> IO.inspect
       |> Enum.reverse
       |> List.flatten
       |> Enum.map(&Generator.emit_scan_definition/1)
@@ -19,8 +18,6 @@ defmodule ScanX do
     end
 
     quote do
-      def scan(nil, nil, 0, nil, nil), do: []
-      defoverridable scan: 5
       unquote_splicing(definitions)
     end
   end
@@ -40,14 +37,24 @@ defmodule ScanX do
       end
 
       def scan_line(linelnb_tuple, debug \\ false)
-      def scan_line({line, lnb}, false), do: scan(:start, String.graphemes(line), {lnb, 1}, [], [])
-      def scan_line({line, lnb}, true), do: scanx(:start, String.graphemes(line), {lnb, 1}, [], [])
+      def scan_line({line, lnb}, false), do: scan__start({String.graphemes(line), {lnb, 1}, [], []})
+      def scan_line({line, lnb}, true), do: scanx__start({String.graphemes(line), {lnb, 1}, [], []})
 
       Module.register_attribute(__MODULE__, :_transitions, accumulate: true)
       Module.register_attribute(__MODULE__, :_current_state, accumulate: false)
     end
   end
 
+  defmacro state(state_id, code)
+  defmacro state(state_id, do: block) when is_binary(state_id) do
+    atom_state_id = state_id
+      |> String.to_atom
+    quote do
+      Module.put_attribute(__MODULE__, :_current_state, unquote(atom_state_id))
+      unquote(block)
+      Module.put_attribute(__MODULE__, :_current_state, nil)
+    end
+  end
   defmacro state(state_id, do: block) do
     quote do
       Module.put_attribute(__MODULE__, :_current_state, unquote(state_id))
