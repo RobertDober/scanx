@@ -8,7 +8,7 @@ defmodule Markdown.ListTest do
     end
     test "-" do
       line = "- "
-      assert scanx(line) == complete_tokens(ul: "- ")
+      assert scan(line) == complete_tokens(ul: "- ")
     end
   end
 
