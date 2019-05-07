@@ -26,13 +26,11 @@ defmodule ScanX.Compiler.Generator do
   def add_token_and_col(tokens, {lnb, col}, parts, {_, _}=state, current_input) do
     with [{_, string1, _, _}, {_, string2, _, _} | _] = new_tokens <- add_token(tokens, {lnb, col}, parts, state, current_input) do
       {col + String.length(string1) + String.length(string2), new_tokens}
-      |> IO.inspect
     end
   end
   def add_token_and_col(tokens, {lnb, col}, parts, state, current_input) do
     with [{_, string, _, _} | _] = new_tokens <- add_token(tokens, {lnb, col}, parts, state, current_input) do
       {col + String.length(string), new_tokens}
-      |> IO.inspect
     end
   end
 

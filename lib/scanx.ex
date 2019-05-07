@@ -42,6 +42,20 @@ defmodule ScanX do
 
       Module.register_attribute(__MODULE__, :_transitions, accumulate: true)
       Module.register_attribute(__MODULE__, :_current_state, accumulate: false)
+      Module.register_attribute(__MODULE__, :_common_blocks, accumulate: true)
+    end
+  end
+
+  defmacro define_block(name, do: code) do
+    quote do
+      Module.put_attribute(__MODULE__, :_common_blocks, {unquote(name), unquote(code)})
+    end
+  end
+
+  defmacro include(name) do
+    quote do
+      Module.get_attribute(__MODULE__, :common_blocks)
+      |> Keyword.get(unquote(name))
     end
   end
 

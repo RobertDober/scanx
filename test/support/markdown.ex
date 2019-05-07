@@ -10,13 +10,16 @@ defmodule Support.Markdown do
   digits  = "0123456789" |> String.graphemes
   uls     = ["- ", "* "]
   
+  define_block :halt_on_empty do
+    empty :halt
+  end
 
   #
   # State Definitions
   # -----------------
   # ... :start at the beginning
   state :start do
-    empty :halt
+    include :halt_on_empty
     on ">", :blockquote
     on ws, :indent
     on uls, :ul
