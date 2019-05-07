@@ -1,4 +1,4 @@
-defmodule Support.MarkdownTest do
+defmodule Support.MarkdownTestHelper do
 
   defmacro __using__(_options) do
     quote do

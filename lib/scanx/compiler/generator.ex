@@ -26,13 +26,13 @@ defmodule ScanX.Compiler.Generator do
   def add_token_and_col(tokens, {lnb, col}, parts, {_, _}=state, current_input) do
     with [{_, string1, _, _}, {_, string2, _, _} | _] = new_tokens <- add_token(tokens, {lnb, col}, parts, state, current_input) do
       {col + String.length(string1) + String.length(string2), new_tokens}
-      |> IO.inspect
+      # |> IO.inspect
     end
   end
   def add_token_and_col(tokens, {lnb, col}, parts, state, current_input) do
     with [{_, string, _, _} | _] = new_tokens <- add_token(tokens, {lnb, col}, parts, state, current_input) do
       {col + String.length(string), new_tokens}
-      |> IO.inspect
+      # |> IO.inspect
     end
   end
 
@@ -61,7 +61,7 @@ defmodule ScanX.Compiler.Generator do
         do: Enum.reverse(add_token(tokens, lnb_col, parts, unquote(emit), ""))
 
       def __def_scan__x({[], lnb_col, parts, tokens}) do
-        IO.inspect({:__current_state__, []|>Enum.join, 50, parts|>convert_part(), tokens})
+        # IO.inspect({:__current_state__, []|>Enum.join, 50, parts|>convert_part(), tokens})
         Enum.reverse(add_token(tokens, lnb_col, parts, unquote(emit), ""))
       end
     end
@@ -73,7 +73,7 @@ defmodule ScanX.Compiler.Generator do
           do: __call_scan__({[], lnb_col, parts, tokens})
 
         def __def_scan__x([], lnb_col, parts, tokens) do
-          IO.inspect({:__current_state__, []|>Enum.join, 62, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, []|>Enum.join, 62, parts|>convert_part(), tokens})
           __call_scan__x({[], lnb_col, parts, tokens})
         end
       end,
@@ -89,7 +89,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, "", 78, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, "", 78, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), "")
           __call_scan__x({[], {lnb, nc}, [], nts})
         end
@@ -113,7 +113,7 @@ defmodule ScanX.Compiler.Generator do
       end
 
       def __def_scan__x({_, lnb_col, parts, tokens}) do
-        IO.inspect({:__current_state__, "∞", 102, parts|>convert_part(), tokens})
+        # IO.inspect({:__current_state__, "∞", 102, parts|>convert_part(), tokens})
         Enum.reverse(add_token(tokens, lnb_col, parts, unquote(emit)), "")
       end
     end
@@ -126,7 +126,7 @@ defmodule ScanX.Compiler.Generator do
       end
 
       def __def_scan__x({[h | _], lnb_col, parts, tokens}) do
-        IO.inspect({:__current_state__, [h, "∞"]|>Enum.join, 115, parts|>convert_part(), tokens})
+        # IO.inspect({:__current_state__, [h, "∞"]|>Enum.join, 115, parts|>convert_part(), tokens})
         Enum.reverse(add_token(tokens, lnb_col, [h | parts], unquote(emit)), h)
       end
     end
@@ -148,7 +148,7 @@ defmodule ScanX.Compiler.Generator do
       end
 
       def __def_scan__x({[unquote_splicing(graphemes) | _], lnb_col, parts, tokens}) do
-        IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 136, parts|>convert_part(), tokens})
+        # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 136, parts|>convert_part(), tokens})
 
         Enum.reverse(
           add_token(
@@ -174,7 +174,7 @@ defmodule ScanX.Compiler.Generator do
       __call_scan__({input, lnb_col, parts, tokens})
       end
         def __def_scan__x({input, lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, input|>Enum.join, 161, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, input|>Enum.join, 161, parts|>convert_part(), tokens})
           __call_scan__x({input, lnb_col, parts, tokens})
         end
       end,
@@ -190,7 +190,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | _] = input, lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 177, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 177, parts|>convert_part(), tokens})
           __call_scan__x({input, lnb_col, parts, tokens})
         end
       end,
@@ -205,7 +205,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | _] = input, lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 192, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 192, parts|>convert_part(), tokens})
           __call_scan__x({input, lnb_col, [head | parts], tokens})
         end
       end,
@@ -227,7 +227,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | _] = input, lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 214, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 214, parts|>convert_part(), tokens})
           __call_scan__x({
             input,
             lnb_col,
@@ -248,7 +248,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | _] = input, {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 235, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 235, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, [head | parts], unquote(emit), head)
           __call_scan__x({input, {lnb, nc}, [], nts})
         end
@@ -300,7 +300,7 @@ defmodule ScanX.Compiler.Generator do
       end
 
       def __def_scan__x({input, {lnb, col}, parts, tokens}) do
-        IO.inspect({:__current_state__, input|>Enum.join, 285, parts, tokens})
+        # IO.inspect({:__current_state__, input|>Enum.join, 285, parts, tokens})
         {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts|>convert_part(), unquote(emit), "")
         __call_scan__x({input, {lnb, nc}, [], nts})
       end
@@ -319,7 +319,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | _] = input, {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 304, parts, tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 304, parts, tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts|>convert_part(), unquote(emit), unquote(graphemes))
           __call_scan__x({input, {lnb, nc}, [], nts})
         end
@@ -336,7 +336,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x([head | _] = input, {lnb, col}, parts, tokens) do
-          IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 321, parts, tokens})
+          # IO.inspect({:__current_state__, [head, "∞"]|>Enum.join, 321, parts, tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts|>convert_part(), unquote(emit), head)
           __call_scan__x({input, {lnb, nc}, [head], nts})
         end
@@ -354,7 +354,7 @@ defmodule ScanX.Compiler.Generator do
           __call_scan__({input, {lnb, nc}, [], nts})
         end
         def __def_scan__x({[unquote_splicing(graphemes) | _] = input, {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞" ]|>Enum.join, 339, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞" ]|>Enum.join, 339, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), unquote(graphemes))
           __call_scan__x({input, {lnb, nc}, [], nts})
         end
@@ -373,7 +373,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | _] = input, {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 358, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes), "∞"]|>Enum.join, 358, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), unquote(graphemes))
           __call_scan__x({input, {lnb, nc}, [unquote_splicing(Enum.reverse(graphemes))], nts})
         end
@@ -393,7 +393,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | rest], lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [head | rest]|>Enum.join, 378, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head | rest]|>Enum.join, 378, parts|>convert_part(), tokens})
           __call_scan__x({rest, lnb_col, parts, tokens})
         end
       end,
@@ -411,7 +411,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | rest], lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [head | rest]|>Enum.join, 396, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head | rest]|>Enum.join, 396, parts|>convert_part(), tokens})
           __call_scan__x({rest, lnb_col, [head | parts], tokens})
         end
       end,
@@ -430,7 +430,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [head | rest]|>Enum.join, 415, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head | rest]|>Enum.join, 415, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, [head | parts], unquote(emit), head)
           __call_scan__x({rest, {lnb, nc}, [], nts})
         end
@@ -450,7 +450,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, ["∞" | rest]|>Enum.join, 435, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, ["∞" | rest]|>Enum.join, 435, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), head)
           __call_scan__x({rest, {lnb, nc}, [], nts})
         end
@@ -470,7 +470,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[head | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [head | rest]|>Enum.join, 455, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [head | rest]|>Enum.join, 455, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), head)
           __call_scan__x({rest, {lnb, nc}, [head], nts})
         end
@@ -490,7 +490,7 @@ defmodule ScanX.Compiler.Generator do
           __call_scan__({rest, lnb_col, parts, tokens})
         end
         def __def_scan__x({[unquote_splicing(graphemes) | rest], lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 475, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 475, parts|>convert_part(), tokens})
           __call_scan__x({rest, lnb_col, parts, tokens})
         end
       end,
@@ -513,7 +513,7 @@ defmodule ScanX.Compiler.Generator do
           })
         end
         def __def_scan__x({[unquote_splicing(graphemes) | rest], lnb_col, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 498, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 498, parts|>convert_part(), tokens})
           __call_scan__x({
             rest,
             lnb_col,
@@ -545,7 +545,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 530, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 530, parts|>convert_part(), tokens})
 
           {nc, nts} =
             add_token_and_col(
@@ -573,7 +573,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 558, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 558, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), unquote(graphemes))
           __call_scan__x({rest, {lnb, nc}, [], nts})
         end
@@ -594,7 +594,7 @@ defmodule ScanX.Compiler.Generator do
         end
 
         def __def_scan__x({[unquote_splicing(graphemes) | rest], {lnb, col}, parts, tokens}) do
-          IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 579, parts|>convert_part(), tokens})
+          # IO.inspect({:__current_state__, [unquote_splicing(graphemes) | rest]|>Enum.join, 579, parts|>convert_part(), tokens})
           {nc, nts} = add_token_and_col(tokens, {lnb, col}, parts, unquote(emit), unquote(graphemes))
           __call_scan__x({rest, {lnb, nc}, [unquote_splicing(Enum.reverse(graphemes))], nts})
         end

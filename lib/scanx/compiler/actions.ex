@@ -8,15 +8,12 @@ defmodule ScanX.Compiler.Actions do
 
   @doc false
   def add_transition(trigger, state, params, current_state)
-
   def add_transition(:empty, state, _params, current_state) when is_list(state) do
     _add_transition(:empty, Keyword.put_new(state, :state, :halt), current_state)
   end
-
   def add_transition(trigger, state, _params, current_state) when is_list(state) do
     _add_transition(trigger, state, current_state)
   end
-
   def add_transition(trigger, state, params, current_state) when is_binary(state) do
     _add_transition(trigger, Keyword.put(params, :state, String.to_atom(state)), current_state)
   end
@@ -26,11 +23,7 @@ defmodule ScanX.Compiler.Actions do
 
   defp _add_transition(trigger, params, current_state) do
     params =
-      if is_list(params) do
-        params |> Enum.into(@default_params)
-      else
-        params
-      end
+      params |> Enum.into(@default_params)
 
     params =
       if Map.get(params, :emit) do
@@ -43,7 +36,6 @@ defmodule ScanX.Compiler.Actions do
   end
 
   def _add_one_or_many(trigger, params, current_state) do
-
       if current_state == nil do
         # raise "Must not call `#{unquote(macro_name_of_trigger(trigger))}` macro outside of state macro"
         raise "Must not call #{trigger} macro outside of state macro"
@@ -56,11 +48,9 @@ defmodule ScanX.Compiler.Actions do
   end
 
   defp macro_name_of_trigger(trigger)
-
   defp macro_name_of_trigger(trigger) when is_binary(trigger) do
     "on"
   end
-
   defp macro_name_of_trigger(trigger), do: trigger
 
 end

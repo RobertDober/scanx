@@ -3,8 +3,8 @@ defmodule ScanX do
   alias ScanX.Compiler.Generator
 
   defmacro __before_compile__(env) do
-    IO.puts env.module
-    IO.puts "================================="
+    # IO.puts env.module
+    # IO.puts "================================="
     definitions =
       Module.get_attribute(env.module, :_transitions)
       |> Enum.reverse
