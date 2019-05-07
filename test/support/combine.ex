@@ -2,7 +2,7 @@ defmodule Support.Combine do
   use ScanX
 
   ws = [" ", "\t", "\n"]
-  kwds = ["do", "end"]
+  kwds = ["do", "end", "for"]
 
   state :start do
     empty(:halt)

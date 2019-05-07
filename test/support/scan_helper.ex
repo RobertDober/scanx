@@ -7,6 +7,7 @@ defmodule Support.ScanHelper do
 
        [{:h1, "# ", 1, 1}, {:ws, " ", 1, 3}, {:text, "hello", 1, 4}]
   """
+  def complete_tokens(), do: complete_tokens([])
   def complete_tokens(tokens) do
     with {result, _} <-
       tokens

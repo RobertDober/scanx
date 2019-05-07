@@ -24,6 +24,14 @@ defmodule Markdown.BackquotesTest do
       line = "hello` `` world"
       assert scan(line) == complete_tokens(text: "hello", bq1: "`", ws: " ", bq2: "``", ws: " ", text: "world")
     end
+    test "longer" do
+      line = "``` ````a````` `````` ```````"
+      assert scan(line) == complete_tokens(bq3: "```", ws: " ", bq4: "````", text: "a", bq5: "`````", ws: " ", bq6: "``````", ws: " ", text: "```````")
+    end
+    test "miscelaneous" do
+      line = "# ``````` a`b"
+      assert scan(line) == complete_tokens(h1: "# ", text: "```````", ws: " ", text: "a", bq1: "`", text: "b")
+    end
   end
   
 end

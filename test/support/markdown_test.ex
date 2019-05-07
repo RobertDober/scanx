@@ -8,6 +8,9 @@ defmodule Support.MarkdownTest do
       def scan(line) do
         Support.Markdown.scan_document(line)
       end
+      def scanx(line) do
+        Support.Markdown.scan_document(line, debug: true)
+      end
     end
   end
 end

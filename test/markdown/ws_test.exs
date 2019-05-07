@@ -1,12 +1,18 @@
 defmodule Markdown.WsTest do
   use Support.MarkdownTest
   
-  describe "blank lines" do
-    ["", " ", "    ", "                    "]
-    |> Enum.each( fn blank -> 
-      test "blank for #{String.length(blank)} spaces" do
-        assert scan(unquote(blank)) == complete_tokens( blank: unquote(blank) )
+  describe "indent lines" do
+    [" ", "    ", "                    "]
+    |> Enum.each( fn indent -> 
+      test "indent for #{String.length(indent)} spaces" do
+        assert scan(unquote(indent)) == complete_tokens( indent: unquote(indent) )
       end
     end)
+  end
+
+  describe "empty lines" do
+    test "empty" do
+      assert scan("") == []
+    end
   end
 end
