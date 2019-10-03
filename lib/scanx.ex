@@ -11,11 +11,14 @@ defmodule ScanX do
       |> List.flatten
       |> Enum.map(&Generator.emit_scan_definition/1)
 
-    if System.get_env("DEBUG_MACROS") do
+    if System.get_env("DEBUG") do
       definitions
       |> Macro.to_string()
       |> IO.puts()
     end
+
+    # File.write!("/tmp/#{env.module}", 
+    #   [env.module, Macro.to_string(definitions)]|> Enum.join("\n==============================\n"))
 
     quote do
       unquote_splicing(definitions)
@@ -47,15 +50,23 @@ defmodule ScanX do
   end
 
   defmacro define_block(name, do: code) do
+    IO.inspect {:block,  Macro.escape(code)}
+    code1 = Macro.escape(code)
     quote do
-      Module.put_attribute(__MODULE__, :_common_blocks, {unquote(name), unquote(code)})
+      # Module.put_attribute(__MODULE__, :_common_blocks, {unquote(name), Macro.escape(unquote(code))})
+      Module.put_attribute(__MODULE__, :_common_blocks, {unquote(name), unquote(code1)})
     end
   end
 
   defmacro include(name) do
     quote do
-      Module.get_attribute(__MODULE__, :common_blocks)
-      |> Keyword.get(unquote(name))
+      current_state = Module.get_attribute(__MODULE__, :_current_state)
+      case Module.get_attribute(__MODULE__, :_common_blocks)
+        |> Keyword.get(unquote(name))
+        |> IO.inspect do
+        {action, _, [state]} -> @_transitions Actions.add_transition(action, state, [], current_state)
+        {action, _, [state, params]} -> @_transitions Actions.add_transition(action, state, params, current_state)
+      end
     end
   end
 
