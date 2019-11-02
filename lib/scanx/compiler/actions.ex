@@ -1,4 +1,9 @@
 defmodule ScanX.Compiler.Actions do
+
+  @moduledoc false
+
+  use ScanX.Types 
+
   @default_params %{
     advance: true,
     collect: true,
@@ -6,9 +11,11 @@ defmodule ScanX.Compiler.Actions do
     state: nil
   }
 
-  @doc false
+  @typep transition_t :: { trigger_t, state_t, Keyword.t }
+  @spec add_transition( trigger_t, state_t, Keyword.t, state_t) :: transition_t
   def add_transition(trigger, state, params, current_state)
   def add_transition(:empty, state, _params, current_state) when is_list(state) do
+    IO.inspect {:empty, state}
     _add_transition(:empty, Keyword.put_new(state, :state, :halt), current_state)
   end
   def add_transition(trigger, state, _params, current_state) when is_list(state) do
@@ -35,6 +42,7 @@ defmodule ScanX.Compiler.Actions do
     _add_one_or_many(trigger, params, current_state)
   end
 
+  @spec _add_one_or_many( any(), map(), state_t ) :: transition_t
   def _add_one_or_many(trigger, params, current_state) do
       if current_state == nil do
         # raise "Must not call `#{unquote(macro_name_of_trigger(trigger))}` macro outside of state macro"
@@ -47,10 +55,10 @@ defmodule ScanX.Compiler.Actions do
       end
   end
 
-  defp macro_name_of_trigger(trigger)
-  defp macro_name_of_trigger(trigger) when is_binary(trigger) do
-    "on"
-  end
-  defp macro_name_of_trigger(trigger), do: trigger
+  # defp macro_name_of_trigger(trigger)
+  # defp macro_name_of_trigger(trigger) when is_binary(trigger) do
+  #   "on"
+  # end
+  # defp macro_name_of_trigger(trigger), do: trigger
 
 end

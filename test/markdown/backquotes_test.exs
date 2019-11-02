@@ -1,5 +1,5 @@
 defmodule Markdown.BackquotesTest do
-  use Support.MarkdownTest
+  use Support.MarkdownTestHelper
 
   describe "all backquotes in isolation" do
     ~w{` `` ``` ````` ```` ``````}

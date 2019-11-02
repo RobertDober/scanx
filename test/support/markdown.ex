@@ -48,7 +48,7 @@ defmodule Support.Markdown do
     on "`", :text
     anything :text, emit: :bq6
   end
-  for {bquote, size} <- Enum.map(bquotes, &{&1, String.length(&1)}) do
+  for size <- Enum.map(bquotes, &String.length(&1)) do
     bq_state = "bq#{size}"
     state bq_state do
       empty :halt, emit: bq_state

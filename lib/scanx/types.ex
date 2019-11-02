@@ -1,10 +1,12 @@
-defmodule Scanx.Types do
+defmodule ScanX.Types do
   defmacro __using__(_options) do
     quote do
       @type grapheme :: binary() | :any
 
       @type maybe(type) :: nil | type
       @type state_t :: maybe(atom())
+
+      @type trigger_t :: String.t
 
       # Macro output -> Transition representation
       @type collect_t :: :after | :before | false | true

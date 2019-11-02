@@ -1,5 +1,5 @@
 defmodule Markdown.ListTest do
-  use Support.MarkdownTest
+  use Support.MarkdownTestHelper
 
   describe "uls" do
     test "*" do

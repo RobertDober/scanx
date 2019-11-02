@@ -1,11 +1,13 @@
 defmodule Scanx.MixProject do
   use Mix.Project
 
+  @version "0.2.1"
+
   def project do
     [
       app: :scanx,
-      version: "0.2.0",
-      elixir: "~> 1.8",
+      version: @version,
+      elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       deps: deps()

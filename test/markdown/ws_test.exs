@@ -1,5 +1,5 @@
 defmodule Markdown.WsTest do
-  use Support.MarkdownTest
+  use Support.MarkdownTestHelper
   
   describe "indent lines" do
     [" ", "    ", "                    "]

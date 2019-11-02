@@ -1,5 +1,5 @@
 defmodule Markdown.BlockquoteTest do
-  use Support.MarkdownTest
+  use Support.MarkdownTestHelper
   
   describe "blockquotes" do
     test "this is a blockquote" do

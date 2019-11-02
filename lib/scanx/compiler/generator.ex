@@ -1,5 +1,8 @@
 defmodule ScanX.Compiler.Generator do
-  @doc false
+  @moduledoc false
+
+  use ScanX.Types
+
   def emit_scan_definition({_, current_state, _}=transition) do
     case emit_scan_def_wo_current_state(transition) do
       {code, new_state}  -> { code, new_state }
@@ -635,6 +638,7 @@ defmodule ScanX.Compiler.Generator do
     any
   end
 
+  @spec normalize_state( state_t | String.t ) :: state_t
   defp normalize_state(state_sym_or_string)
   defp normalize_state(string) when is_binary(string) do
     string |> String.to_atom
